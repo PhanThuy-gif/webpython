@@ -102,9 +102,8 @@ def editProfile(request):
         user_object.last_name = request.POST.get('lastname')
         user_object.save()
         
-        #gender
+        #gender,sdt
         user_profile.gender = request.POST.get('gender')
-        user_object.email = request.POST.get('email')
         user_profile.sdt = request.POST.get('sdt')
         user_profile.save()
         
