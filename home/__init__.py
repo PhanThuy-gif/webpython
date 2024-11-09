@@ -1,1 +1,1 @@
-from django.utils import settings
+from django.conf import settings
