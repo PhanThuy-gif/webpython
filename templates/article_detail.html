@@ -18,7 +18,9 @@
 
     <!-- Phần nội dung bài báo -->
     <div class="article-text">
-        <p>{{ article.text }}</p> <!-- Hiển thị văn bản bài báo -->
+        {% for paragraph in paragraphs %}
+            <p>{{ paragraph }}</p>
+        {% endfor %} <!-- Hiển thị văn bản bài báo -->
     </div>
 
     <!-- Footer -->
