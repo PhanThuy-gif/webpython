@@ -60,42 +60,41 @@
 
       <div class="container-fluid bg-light py-2 border-bottom">
         <div class="container">
-          <div class="category-bar d-flex justify-content-between align-items-center flex-wrap">
-            <!-- Kiểm tra nếu đường dẫn hiện tại là '/thoi-su/' thì thêm lớp active -->
-            <a href="{% url 'thoi_su' %}" class="category-link {% if request.path == '/thoi-su/' %}active{% endif %}">Thời sự</a>
-            <a href="{% url 'the_gioi' %}" class="category-link {% if request.path == '/the-gioi/' %}active{% endif %}">Thế giới</a>
-            <a href="{% url 'video' %}" class="category-link {% if request.path == '/video/' %}active{% endif %}">Video</a>
-            <a href="{% url 'kinh_doanh' %}" class="category-link {% if request.path == '/kinh-doanh/' %}active{% endif %}">Kinh doanh</a>
-            <a href="{% url 'bat_dong_san' %}" class="category-link {% if request.path == '/bat-dong-san/' %}active{% endif %}">Bất động sản</a>
-            <a href="{% url 'khoa_hoc' %}" class="category-link {% if request.path == '/khoa-hoc/' %}active{% endif %}">Khoa học</a>
-            <a href="{% url 'giai_tri' %}" class="category-link {% if request.path == '/giai-tri/' %}active{% endif %}">Giải trí</a>
-            <a href="{% url 'the_thao' %}" class="category-link {% if request.path == '/the-thao/' %}active{% endif %}">Thể thao</a>
-            <a href="{% url 'phap_luat' %}" class="category-link {% if request.path == '/phap-luat/' %}active{% endif %}">Pháp luật</a>
-            <a href="{% url 'giao_duc' %}" class="category-link {% if request.path == '/giao-duc/' %}active{% endif %}">Giáo dục</a>
-            <a href="{% url 'suc_khoe' %}" class="category-link {% if request.path == '/suc-khoe/' %}active{% endif %}">Sức khỏe</a>
-            <a href="{% url 'doi_song' %}" class="category-link {% if request.path == '/doi-song/' %}active{% endif %}">Đời sống</a>
-            <a href="{% url 'du_lich' %}" class="category-link {% if request.path == '/du-lich/' %}active{% endif %}">Du lịch</a>
-            <a href="{% url 'so_hoa' %}" class="category-link {% if request.path == '/so-hoa/' %}active{% endif %}">Số hóa</a>
-            <a href="{% url 'xe' %}" class="category-link {% if request.path == '/xe/' %}active{% endif %}">Xe</a>
-          </div>
+            <div class="category-bar d-flex justify-content-between align-items-center flex-wrap">
+                <a href="{% url 'category_view' category='Thời Sự' %}" class="category-link {% if request.resolver_match.kwargs.category == 'Thời Sự' %}active{% endif %}">Thời sự</a>
+                <a href="{% url 'category_view' category='Thế Giới' %}" class="category-link {% if request.resolver_match.kwargs.category == 'Thế Giới' %}active{% endif %}">Thế giới</a>
+                <a href="{% url 'category_view' category='Thư Giãn' %}" class="category-link {% if request.resolver_match.kwargs.category == 'Thư Giãn' %}active{% endif %}">Thư giãn</a>
+                <a href="{% url 'category_view' category='Kinh Doanh' %}" class="category-link {% if request.resolver_match.kwargs.category == 'Kinh Doanh' %}active{% endif %}">Kinh doanh</a>
+                <a href="{% url 'category_view' category='Bất Động Sản' %}" class="category-link {% if request.resolver_match.kwargs.category == 'Bất Động Sản' %}active{% endif %}">Bất động sản</a>
+                <a href="{% url 'category_view' category='Khoa Học' %}" class="category-link {% if request.resolver_match.kwargs.category == 'Khoa Học' %}active{% endif %}">Khoa học</a>
+                <a href="{% url 'category_view' category='Giải Trí' %}" class="category-link {% if request.resolver_match.kwargs.category == 'Giải Trí' %}active{% endif %}">Giải trí</a>
+                <a href="{% url 'category_view' category='Thể Thao' %}" class="category-link {% if request.resolver_match.kwargs.category == 'Thể Thao' %}active{% endif %}">Thể thao</a>
+                <a href="{% url 'category_view' category='Pháp Luật' %}" class="category-link {% if request.resolver_match.kwargs.category == 'Pháp Luật' %}active{% endif %}">Pháp luật</a>
+                <a href="{% url 'category_view' category='Giáo Dục' %}" class="category-link {% if request.resolver_match.kwargs.category == 'Giáo Dục' %}active{% endif %}">Giáo dục</a>
+                <a href="{% url 'category_view' category='Sức Khỏe' %}" class="category-link {% if request.resolver_match.kwargs.category == 'Sức Khỏe' %}active{% endif %}">Sức khỏe</a>
+                <a href="{% url 'category_view' category='Đời Sống' %}" class="category-link {% if request.resolver_match.kwargs.category == 'Đời Sống' %}active{% endif %}">Đời sống</a>
+                <a href="{% url 'category_view' category='Du Lịch' %}" class="category-link {% if request.resolver_match.kwargs.category == 'Du Lịch' %}active{% endif %}">Du lịch</a>
+                <a href="{% url 'category_view' category='Số Hóa' %}" class="category-link {% if request.resolver_match.kwargs.category == 'Số Hóa' %}active{% endif %}">Số hóa</a>
+                <a href="{% url 'category_view' category='Xe' %}" class="category-link {% if request.resolver_match.kwargs.category == 'Xe' %}active{% endif %}">Xe</a>
+            </div>
         </div>
-      </div>
-      
-
+    </div>
+    
+    
 
 <!-- CSS -->
 <style>
-  /* Category Bar Styling */
   .category-bar {
-    gap: 10px; /* khoảng cách giữa các mục */
-    flex-wrap: nowrap; /* ngăn không cho xuống dòng */
-    overflow-x: auto; /* thêm thanh cuộn ngang khi không gian không đủ */
-    white-space: nowrap; /* ngăn không cho nội dung xuống dòng */
+    display: flex; /* Sử dụng flexbox */
+    flex-wrap: wrap; /* Cho phép xuống dòng khi không đủ không gian */
+    gap: 9px; /* Khoảng cách giữa các mục */
+    white-space: normal; /* Nội dung trong mục được phép xuống dòng */
+    justify-content: flex-start; /* Căn chỉnh các mục từ trái sang phải */
     padding: 5px 0;
   }
 
   .category-link {
-    color: #333;
+    color: #000000;
     text-decoration: none;
     padding: 5px 10px;
     font-weight: 500;
@@ -103,11 +102,12 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  /* Để chữ in đậm khi mục được chọn */
-.category-link.active {
-  font-weight: bold; /* In đậm chữ */
-  color: #007bff; /* Thay đổi màu chữ nếu cần */
-}
+    /* Để chữ in đậm khi mục được chọn */
+  .category-link.active {
+    font-weight: 500;
+    text-decoration: underline;
+    color: #007bff; /* Thay đổi màu chữ nếu cần */
+  }
 
   /* Hover Effect */
   .category-link:hover {
