@@ -50,7 +50,7 @@ def index(request):
     feed = feedparser.parse(rss_url)
 
     articles = []
-    for entry in feed.entries[:51]:  # Lấy 5 bài báo mới nhất
+    for entry in feed.entries[:51]:  # Lấy 51 bài báo mới nhất
         # Mã hóa URL của bài báo
         encoded_url = quote(entry.link)
 
@@ -87,6 +87,81 @@ def index(request):
 
     # Cập nhật context để chứa cả thông tin người dùng và bài báo
     context['articles'] = articles
+
+    # Trả về template với dữ liệu người dùng và bài báo
+    return render(request, 'home.html', context)
+
+def category_view(request, category):
+    # Định nghĩa các RSS feed cho từng hạng mục
+    rss_urls = {
+        "Thời Sự": "https://vnexpress.net/rss/thoi-su.rss",
+        "Thế Giới": "https://vnexpress.net/rss/the-gioi.rss",
+        "Thư Giãn": "https://vnexpress.net/rss/cuoi.rss",
+        "Kinh Doanh": "https://vnexpress.net/rss/kinh-doanh.rss",
+        "Bất Động Sản": "https://vnexpress.net/rss/bat-dong-san.rss",
+        "Khoa Học": "https://vnexpress.net/rss/khoa-hoc.rss",
+        "Giải Trí": "https://vnexpress.net/rss/giai-tri.rss",
+        "Thể Thao": "https://vnexpress.net/rss/the-thao.rss",
+        "Pháp Luật": "https://vnexpress.net/rss/phap-luat.rss",
+        "Giáo Dục": "https://vnexpress.net/rss/giao-duc.rss",
+        "Sức Khỏe": "https://vnexpress.net/rss/suc-khoe.rss",
+        "Đời Sống": "https://vnexpress.net/rss/doi-song.rss",
+        "Du Lịch": "https://vnexpress.net/rss/du-lich.rss",
+        "Số Hóa": "https://vnexpress.net/rss/so-hoa.rss",
+        "Xe": "https://vnexpress.net/rss/oto-xe-may.rss"
+    }
+
+    # Lấy URL của category từ danh sách RSS
+    rss_url = rss_urls.get(category)
+    if not rss_url:
+        # Trả về trang 404 nếu không tìm thấy chuyên mục
+        return render(request, '404.html', status=404)
+
+    # Tải và phân tích RSS feed
+    feed = feedparser.parse(rss_url)
+
+    articles = []
+    for entry in feed.entries[:51]:  # Lấy 51 bài báo mới nhất
+        # Mã hóa URL của bài báo
+        encoded_url = quote(entry.link)
+
+        # Kiểm tra và lấy ảnh từ enclosure (nếu có)
+        image_url = None
+        if 'enclosures' in entry and entry.enclosures:
+            image_url = entry.enclosures[0].href
+        
+        # Nếu không có enclosure, tìm ảnh trong phần description
+        if not image_url and 'description' in entry:
+            img_match = re.search(r'<img src="([^"]+)"', entry.description)
+            if img_match:
+                image_url = img_match.group(1)
+        
+        # Nếu không có ảnh, sử dụng ảnh mặc định
+        if not image_url:
+            image_url = "/static/images/news.webp" 
+
+        # Xử lý tóm tắt bài báo bằng BeautifulSoup
+        summary_text = ''
+        if 'description' in entry:
+            soup = BeautifulSoup(entry.description, 'html.parser')
+            # Xóa các thẻ <a> và <img>
+            for tag in soup.find_all(['a', 'img']):
+                tag.decompose()  # Xóa thẻ khỏi DOM
+
+            # Lấy lại tóm tắt đã xử lý
+            summary_text = soup.get_text()
+
+        # Thêm bài báo vào danh sách articles
+        articles.append({
+            'title': entry.title,
+            'link': encoded_url,  # Sử dụng URL đã mã hóa
+            'published': entry.published,
+            'summary': summary_text,
+            'image_url': image_url  # Truyền URL ảnh vào template
+        })
+
+    # Cập nhật context để chứa cả thông tin người dùng và bài báo
+    context = {'articles': articles, 'category': category}
 
     # Trả về template với dữ liệu người dùng và bài báo
     return render(request, 'home.html', context)

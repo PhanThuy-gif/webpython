@@ -136,6 +136,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CELERY_BEAT_SCHEDULE = {
     'update-articles-every-5-minutes': {
         'task': 'yourapp.tasks.update_articles_task',
-        'schedule': 300,  # 300 giây = 5 phút
+        'schedule': 10,  # 300 giây = 5 phút
     },
 }
