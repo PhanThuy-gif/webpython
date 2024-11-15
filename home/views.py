@@ -10,7 +10,6 @@ from django.http import JsonResponse
 from urllib.parse import quote, urljoin
 import re
 from bs4 import BeautifulSoup
-
     
 def article_detail(request, article_url):
     try:
@@ -21,6 +20,8 @@ def article_detail(request, article_url):
         article = Article(decoded_url)
         article.download()
         article.parse()
+        
+        paragraphs = article.text.split('\n')
 
         # Kiểm tra nếu ảnh có trong bài báo
         image_url = article.top_image if article.top_image else None
@@ -28,7 +29,8 @@ def article_detail(request, article_url):
         # Trả về nội dung bài báo cho template, bao gồm ảnh (nếu có)
         return render(request, 'article_detail.html', {
             'article': article,
-            'image_url': image_url
+            'image_url': image_url,
+            'paragraphs': paragraphs
         })
     except Exception as e:
         return JsonResponse({'error': f'Lỗi: {str(e)}'})

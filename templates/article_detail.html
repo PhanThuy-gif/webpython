@@ -167,6 +167,7 @@
             <p class="publish-date">{{ article.publish_date|date:"D, d M Y H:i:s" }}</p>
         </div>
 
+
         <!-- Hiển thị ảnh bài báo -->
         {% if image_url %}
             <div class="image-container mb-4">
@@ -175,11 +176,12 @@
         {% else %}
             <p class="text-center text-warning">No image available</p>
         {% endif %}
-
-        <!-- Phần nội dung bài báo -->
-        <div class="article-text">
-            <p>{{ article.text }}</p>
-        </div>
+       
+    <!-- Phần nội dung bài báo -->
+    <div class="article-text">
+        {% for paragraph in paragraphs %}
+            <p>{{ paragraph }}</p>
+        {% endfor %} <!-- Hiển thị văn bản bài báo -->
     </div>
 
     <!-- Footer -->
