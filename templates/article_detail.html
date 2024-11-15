@@ -1,0 +1,130 @@
+<div class="container mt-5">
+    <!-- Tiêu đề bài báo -->
+    <h1 class="article-title text-center">{{ article.title }}</h1>
+
+    <!-- Thông tin tác giả và thời gian đăng bài -->
+    <div class="d-flex justify-content-center mb-4">
+        <p class="publish-date">{{ article.publish_date|date:"D, d M Y H:i:s" }}</p>
+    </div>
+
+    <!-- Hiển thị ảnh bài báo -->
+    {% if image_url %}
+        <div class="image-container mb-4">
+            <img src="{{ image_url }}" alt="{{ article.title }}" class="img-fluid rounded shadow-lg">
+        </div>
+    {% else %}
+        <p class="text-center text-warning">No image available</p>
+    {% endif %}
+
+    <!-- Phần nội dung bài báo -->
+    <div class="article-text">
+        <p>{{ article.text }}</p> <!-- Hiển thị văn bản bài báo -->
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-5 text-center text-muted">
+        <p>&copy; Bao News. All rights reserved.</p>
+    </footer>
+</div>
+
+<!-- Các kiểu CSS cải tiến -->
+<style>
+    /* Phông chữ đẹp và dễ đọc */
+    .article-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 2em;
+        color: #222;
+        margin-bottom: 25px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Thông tin tác giả và ngày tháng */
+    .author-info {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #007bff;
+        margin-right: 20px;
+    }
+
+    .publish-date {
+        font-size: 1rem;
+        color: #999;
+    }
+
+    /* Cải thiện phần văn bản bài báo */
+    .article-text p {
+        font-size: 1.25rem;
+        line-height: 1.75;
+        color: #444;
+        text-align: justify;
+        margin-bottom: 2rem;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .article-text {
+        background-color: #f4f4f4;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+        margin-bottom: 40px;
+    }
+
+    /* Container chính, căn giữa */
+    .container {
+        max-width: 900px; /* Đặt chiều rộng tối đa */
+        margin: 0 auto; /* Căn giữa trên màn hình */
+        padding: 0 15px;
+    }
+
+    /* Nền và bo góc cho ảnh */
+    .image-container {
+        max-width: 80%; /* Điều chỉnh kích thước ảnh */
+        overflow: hidden;
+        border-radius: 10px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        margin: 0 auto; /* Canh giữa ảnh */
+    }
+
+    .img-fluid {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .img-fluid:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Footer */
+    footer {
+        background-color: #f9f9f9;
+        padding: 15px;
+        font-size: 1rem;
+        color: #777;
+        border-top: 1px solid #ddd;
+    }
+
+    /* Cải tiến cách hiển thị thông tin tác giả và ngày tháng */
+    .d-flex p {
+        font-size: 1rem;
+        margin: 0 20px;
+        color: #666;
+    }
+
+    /* Tạo hiệu ứng hover cho link */
+    a {
+        text-decoration: none;
+        color: #007bff;
+        transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    a:hover {
+        color: #0056b3;
+        transform: translateY(-2px);
+    }
+</style>

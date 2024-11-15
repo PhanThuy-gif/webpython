@@ -74,7 +74,7 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# https://docs.djangoproject.com/en/5.1/ref/settings/#databases 
 
 DATABASES = {
     'default': {
@@ -132,3 +132,11 @@ MEDIA_ROOT = BASE_DIR/ 'media'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# settings.py
+CELERY_BEAT_SCHEDULE = {
+    'update-articles-every-5-minutes': {
+        'task': 'yourapp.tasks.update_articles_task',
+        'schedule': 300,  # 300 giây = 5 phút
+    },
+}
