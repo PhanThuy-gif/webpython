@@ -12,6 +12,13 @@ import re
 from bs4 import BeautifulSoup
     
 def article_detail(request, article_url):
+    if request.user.is_authenticated:
+        user_object = User.objects.get(username=request.user)
+        user_profile = Profile.objects.get(user=user_object)
+        context = {"user_profile": user_profile}
+    else:
+        context = {}
+    
     try:
         # Giải mã URL
         decoded_url = unquote(article_url)
@@ -26,14 +33,18 @@ def article_detail(request, article_url):
         # Kiểm tra nếu ảnh có trong bài báo
         image_url = article.top_image if article.top_image else None
 
-        # Trả về nội dung bài báo cho template, bao gồm ảnh (nếu có)
-        return render(request, 'article_detail.html', {
+        # Thêm dữ liệu vào context
+        context.update({
             'article': article,
             'image_url': image_url,
             'paragraphs': paragraphs
         })
+
+        # Trả về nội dung bài báo cho template
+        return render(request, 'article_detail.html', context)
     except Exception as e:
         return JsonResponse({'error': f'Lỗi: {str(e)}'})
+
 
 
 def index(request):
@@ -92,6 +103,14 @@ def index(request):
     return render(request, 'home.html', context)
 
 def category_view(request, category):
+    
+    if request.user.is_authenticated:
+        user_object = User.objects.get(username=request.user)
+        user_profile = Profile.objects.get(user=user_object)
+        context = {"user_profile": user_profile}
+    else:
+        context = {}
+    
     # Định nghĩa các RSS feed cho từng hạng mục
     rss_urls = {
         "Thời Sự": "https://vnexpress.net/rss/thoi-su.rss",
@@ -161,7 +180,7 @@ def category_view(request, category):
         })
 
     # Cập nhật context để chứa cả thông tin người dùng và bài báo
-    context = {'articles': articles, 'category': category}
+    context.update({'articles': articles, 'category': category})
 
     # Trả về template với dữ liệu người dùng và bài báo
     return render(request, 'home.html', context)
