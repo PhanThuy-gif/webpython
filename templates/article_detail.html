@@ -1,130 +1,183 @@
-<div class="container mt-5">
-    <!-- Tiêu đề bài báo -->
-    <h1 class="article-title text-center">{{ article.title }}</h1>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ article.title }}</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
 
-    <!-- Thông tin tác giả và thời gian đăng bài -->
-    <div class="d-flex justify-content-center mb-4">
-        <p class="publish-date">{{ article.publish_date|date:"D, d M Y H:i:s" }}</p>
-    </div>
+        .container {
+            margin-top: 30px;
+        }
 
-    <!-- Hiển thị ảnh bài báo -->
-    {% if image_url %}
-        <div class="image-container mb-4">
-            <img src="{{ image_url }}" alt="{{ article.title }}" class="img-fluid rounded shadow-lg">
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .article-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #000000;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .article-title:hover {
+            color: #007bff;
+        }
+
+        .article {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .article:hover {
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .article img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .article-summary {
+            font-size: 1rem;
+            color: #555;
+        }
+
+        footer {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .article-text p {
+            font-size: 1.25rem;
+            line-height: 1.75;
+            color: #444;
+            text-align: justify;
+            margin-bottom: 2rem;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .article-text {
+            background-color: #f4f4f4;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+        }
+
+        .image-container {
+            max-width: 80%;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+        }
+
+        .img-fluid {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .img-fluid:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        footer {
+            background-color: #f9f9f9;
+            padding: 15px;
+            font-size: 1rem;
+            color: #777;
+            border-top: 1px solid #ddd;
+        }
+
+        .d-flex p {
+            font-size: 1rem;
+            margin: 0 20px;
+            color: #666;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        a:hover {
+            color: #0056b3;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    {% include "components/navbar.html" %}
+
+    <!-- Content -->
+    <div class="container mt-5">
+        <!-- Tiêu đề bài báo -->
+        <h1 class="article-title text-center">{{ article.title }}</h1>
+
+        <!-- Thông tin tác giả và thời gian đăng bài -->
+        <div class="d-flex justify-content-center mb-4">
+            <p class="publish-date">{{ article.publish_date|date:"D, d M Y H:i:s" }}</p>
         </div>
-    {% else %}
-        <p class="text-center text-warning">No image available</p>
-    {% endif %}
 
-    <!-- Phần nội dung bài báo -->
-    <div class="article-text">
-        <p>{{ article.text }}</p> <!-- Hiển thị văn bản bài báo -->
+        <!-- Hiển thị ảnh bài báo -->
+        {% if image_url %}
+            <div class="image-container mb-4">
+                <img src="{{ image_url }}" alt="{{ article.title }}" class="img-fluid rounded shadow-lg">
+            </div>
+        {% else %}
+            <p class="text-center text-warning">No image available</p>
+        {% endif %}
+
+        <!-- Phần nội dung bài báo -->
+        <div class="article-text">
+            <p>{{ article.text }}</p>
+        </div>
     </div>
 
     <!-- Footer -->
     <footer class="footer mt-5 text-center text-muted">
         <p>&copy; Bao News. All rights reserved.</p>
     </footer>
-</div>
 
-<!-- Các kiểu CSS cải tiến -->
-<style>
-    /* Phông chữ đẹp và dễ đọc */
-    .article-title {
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 700;
-        font-size: 2em;
-        color: #222;
-        margin-bottom: 25px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    /* Thông tin tác giả và ngày tháng */
-    .author-info {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #007bff;
-        margin-right: 20px;
-    }
-
-    .publish-date {
-        font-size: 1rem;
-        color: #999;
-    }
-
-    /* Cải thiện phần văn bản bài báo */
-    .article-text p {
-        font-size: 1.25rem;
-        line-height: 1.75;
-        color: #444;
-        text-align: justify;
-        margin-bottom: 2rem;
-        font-family: 'Roboto', sans-serif;
-    }
-
-    .article-text {
-        background-color: #f4f4f4;
-        padding: 25px;
-        border-radius: 10px;
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
-        margin-bottom: 40px;
-    }
-
-    /* Container chính, căn giữa */
-    .container {
-        max-width: 900px; /* Đặt chiều rộng tối đa */
-        margin: 0 auto; /* Căn giữa trên màn hình */
-        padding: 0 15px;
-    }
-
-    /* Nền và bo góc cho ảnh */
-    .image-container {
-        max-width: 80%; /* Điều chỉnh kích thước ảnh */
-        overflow: hidden;
-        border-radius: 10px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        margin: 0 auto; /* Canh giữa ảnh */
-    }
-
-    .img-fluid {
-        width: 100%;
-        height: auto;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .img-fluid:hover {
-        transform: scale(1.05);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Footer */
-    footer {
-        background-color: #f9f9f9;
-        padding: 15px;
-        font-size: 1rem;
-        color: #777;
-        border-top: 1px solid #ddd;
-    }
-
-    /* Cải tiến cách hiển thị thông tin tác giả và ngày tháng */
-    .d-flex p {
-        font-size: 1rem;
-        margin: 0 20px;
-        color: #666;
-    }
-
-    /* Tạo hiệu ứng hover cho link */
-    a {
-        text-decoration: none;
-        color: #007bff;
-        transition: color 0.3s ease, transform 0.3s ease;
-    }
-
-    a:hover {
-        color: #0056b3;
-        transform: translateY(-2px);
-    }
-</style>
+</body>
+</html>
