@@ -10,6 +10,13 @@ from django.http import JsonResponse
 from urllib.parse import quote, urljoin
 import re
 from bs4 import BeautifulSoup
+from django.db.models import Q
+
+def search_view(request):
+    if request.method == "POST":
+        searched =request.POST["searched"]
+        keys = Profile.objects.filter(name__contains = searched)
+    return render(request, 'home/search.html',{"searched":searched,"keys":keys})
     
 def article_detail(request, article_url):
     if request.user.is_authenticated:
