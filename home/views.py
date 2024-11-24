@@ -12,12 +12,12 @@ import re
 from bs4 import BeautifulSoup
 from django.db.models import Q
 
-def search_view(request):
+def search(request):
     if request.method == "POST":
-        searched =request.POST["searched"]
-        keys = Profile.objects.filter(name__contains = searched)
-    return render(request, 'home/search.html',{"searched":searched,"keys":keys})
-    
+        searched = request.POST["searched"]
+        keys=Profile.objects.filter(title__icontains = searched)
+    return render(request, 'search.html',{"searched":searched,"keys":keys})
+
 def article_detail(request, article_url):
     if request.user.is_authenticated:
         user_object = User.objects.get(username=request.user)
