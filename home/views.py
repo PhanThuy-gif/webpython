@@ -12,12 +12,6 @@ import re
 from bs4 import BeautifulSoup
 from django.db.models import Q
 
-def search(request):
-    if request.method == "POST":
-        searched = request.POST["searched"]
-        keys=Profile.objects.filter(title__icontains = searched)
-    return render(request, 'search.html',{"searched":searched,"keys":keys})
-
 def article_detail(request, article_url):
     if request.user.is_authenticated:
         user_object = User.objects.get(username=request.user)
@@ -191,3 +185,60 @@ def category_view(request, category):
 
     # Trả về template với dữ liệu người dùng và bài báo
     return render(request, 'home.html', context)
+
+def search(request):
+    # Kiểm tra nếu người dùng đã đăng nhập
+    if request.user.is_authenticated:
+        user_object = User.objects.get(username=request.user)
+        user_profile = Profile.objects.get(user=user_object)
+        context = {"user_profile": user_profile}
+    else:
+        context = {}
+
+    # URL của RSS Feed từ VnExpress
+    rss_url = "https://vnexpress.net/rss/tin-moi-nhat.rss"
+    feed = feedparser.parse(rss_url)
+
+    articles = []
+    for entry in feed.entries[:51]:  # Lấy 51 bài báo mới nhất
+        encoded_url = quote(entry.link)
+        image_url = entry.enclosures[0].href if 'enclosures' in entry and entry.enclosures else None
+
+        if not image_url and 'description' in entry:
+            img_match = re.search(r'<img src="([^"]+)"', entry.description)
+            if img_match:
+                image_url = img_match.group(1)
+
+        if not image_url:
+            image_url = "/static/images/news.webp" 
+
+        summary_text = ''
+        if 'description' in entry:
+            soup = BeautifulSoup(entry.description, 'html.parser')
+            for tag in soup.find_all(['a', 'img']):
+                tag.decompose()
+            summary_text = soup.get_text()
+
+        articles.append({
+            'title': entry.title,
+            'link': encoded_url,
+            'published': entry.published,
+            'summary': summary_text,
+            'image_url': image_url
+        })
+
+    # Xử lý tìm kiếm
+    if request.method == "POST":
+        searched = request.POST.get("searched", "").lower()
+        filtered_articles = [
+            article for article in articles
+            if searched in article['title'].lower() or searched in article['summary'].lower()
+        ]
+        context.update({
+            'searched': searched,
+            'articles': filtered_articles,
+        })
+    else:
+        context['articles'] = articles
+
+    return render(request, 'search.html', context)
