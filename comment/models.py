@@ -13,7 +13,6 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    article = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
     article = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments") # xóa bài viết xóa luôn bình luận,tìm các bình luận thông qua từ khóa comments
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     text = models.TextField()
