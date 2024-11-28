@@ -4,7 +4,7 @@ from .models import Comment
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ['body']  
+        fields = ['content']
         widgets = {
-            'body': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Nhập bình luận...', 'rows': 3}),
+            'content': forms.Textarea(attrs={'placeholder': 'Viết bình luận...', 'rows': 4}),
         }

@@ -191,43 +191,38 @@
 
 </body>
 </html>
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Chi tiết bài viết</title> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ article.title }}</title>
 </head>
 <body>
-    <!-- Phần tiêu đề bài viết bị xóa -->
-    <!-- <h1>{{ article.title }}</h1> -->
-
-    <!-- Nội dung bài viết -->
+    <h1>{{ article.title }}</h1>
     <p>{{ article.content }}</p>
-
     <hr>
-
-    <!-- Bình luận -->
     <h2>Bình luận</h2>
-    {% for comment in comments %}
-        <div style="margin-bottom: 20px; border-bottom: 1px solid #ccc; padding: 10px;">
-            <strong>{{ comment.user.username }}</strong> - {{ comment.created_at }}
-            <p>{{ comment.body }}</p>
-        </div>
-    {% empty %}
-        <p>Chưa có bình luận nào.</p>
-    {% endfor %}
-
+    <ul>
+        {% for comment in comments %}
+            <li>
+                <strong>{{ comment.author }}:</strong>
+                {{ comment.content }} <small>({{ comment.created_at }})</small>
+            </li>
+        {% empty %}
+            <li>Chưa có bình luận nào.</li>
+        {% endfor %}
+    </ul>
     <hr>
-    <!-- Form thêm bình luận -->
     {% if user.is_authenticated %}
         <h3>Thêm bình luận</h3>
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" >Gửi</button>
+            <button type="submit">Gửi</button>
         </form>
     {% else %}
-        <p>Bạn cần <a href="{% url 'login' %}">đăng nhập</a> để bình luận.</p>
+        <p><a href="{% url 'login' %}">Đăng nhập</a> để bình luận.</p>
     {% endif %}
 </body>
 </html>
