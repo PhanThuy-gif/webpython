@@ -7,7 +7,7 @@ def article_detail(request, pk):
     comments = article.comments.all()  # Lấy tất cả bình luận liên quan đến bài viết
     form = CommentForm()
 
-    if request.method == 'Post':
+    if request.method == 'POST':
         form = CommentForm(request.Post)
         if form.is_valid(): #Kiểm tra form có hợp lệ không
             comment = form.save(commit=False)
