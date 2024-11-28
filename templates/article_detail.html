@@ -223,7 +223,7 @@
     <!-- Form thêm bình luận -->
     {% if user.is_authenticated %}
         <h3>Thêm bình luận</h3>
-        <form method="article">
+        <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" style="padding: 10px; background-color: #007BFF; color: white; border: none;">Gửi</button>

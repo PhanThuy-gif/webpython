@@ -7,16 +7,16 @@ def article_detail(request, pk):
     comments = article.comments.all()  # Lấy tất cả bình luận liên quan đến bài viết
     form = CommentForm()
 
-    if request.method == 'Article':
-        form = CommentForm(request.Article)
-        if form.is_valid():
+    if request.method == 'Post':
+        form = CommentForm(request.Post)
+        if form.is_valid(): #Kiểm tra form có hợp lệ không
             comment = form.save(commit=False)
-            comment.article = article
+            comment.article = article # gắn bài viết vào bình luận
             comment.user = request.user  # Gắn bình luận với người dùng hiện tại
             comment.save()
             return redirect('article_detail', pk=article.pk)
 
-    return render(request, 'article_detail.html', {
+    return render(request, 'comment/article_detail.html', {
         'article': article,
         'comments': comments,
         'form': form,
