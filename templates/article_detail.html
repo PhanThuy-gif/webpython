@@ -192,17 +192,22 @@
 </body>
 </html>
 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ article.title }}</title>
+    <title>Chi tiết bài viết</title> 
 </head>
 <body>
-    <h1>{{ article.title }}</h1>
+    <!-- Phần tiêu đề bài viết bị xóa -->
+    <!-- <h1>{{ article.title }}</h1> -->
+
+    <!-- Nội dung bài viết -->
     <p>{{ article.content }}</p>
 
     <hr>
 
+    <!-- Bình luận -->
     <h2>Bình luận</h2>
     {% for comment in comments %}
         <div style="margin-bottom: 20px; border-bottom: 1px solid #ccc; padding: 10px;">
@@ -215,9 +220,10 @@
 
     <hr>
 
+    <!-- Form thêm bình luận -->
     {% if user.is_authenticated %}
         <h3>Thêm bình luận</h3>
-        <form method="post">
+        <form method="article">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" style="padding: 10px; background-color: #007BFF; color: white; border: none;">Gửi</button>
