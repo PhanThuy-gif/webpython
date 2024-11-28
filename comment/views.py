@@ -1,15 +1,17 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Post, Comment
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Article, Comment
 from .forms import CommentForm
-from django.http import HttpResponseRedirect
-# Create your views here.
-
-def post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    form = CommentForm()
-    if request.method == "POST":
-        form = CommentForm(request.POST, author=request.user, post=post)
+def article_detail(request, article_id):
+    article = get_object_or_404(Article, id=article_id)
+    comments = article.comments.all() #lấy all bình luận của bài viết
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
         if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(request.path)
-    return render(request, "post.html", {"post": post, "form": form})
+            comment = form.save(commit=False)
+            comment.article = article
+            comment.save()
+            return redirect('article_detail', article_id=article.id)
+    else:
+        form = CommentForm()
+
+    return render(request, 'article_detail.html', {'article': article, 'comments': comments, 'form': form})
