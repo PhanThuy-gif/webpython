@@ -219,14 +219,13 @@
     {% endfor %}
 
     <hr>
-
     <!-- Form thêm bình luận -->
     {% if user.is_authenticated %}
         <h3>Thêm bình luận</h3>
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" style="padding: 10px; background-color: #007BFF; color: white; border: none;">Gửi</button>
+            <button type="submit" >Gửi</button>
         </form>
     {% else %}
         <p>Bạn cần <a href="{% url 'login' %}">đăng nhập</a> để bình luận.</p>
