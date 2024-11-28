@@ -6,5 +6,9 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['content']
         widgets = {
-            'content': forms.Textarea(attrs={'placeholder': 'Viết bình luận...', 'rows': 4}),
+            'content': forms.Textarea(attrs={
+                'placeholder': 'Viết bình luận...',
+                'rows': 4,
+                'class': 'form-control',
+            }),
         }

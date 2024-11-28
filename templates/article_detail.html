@@ -191,38 +191,28 @@
 
 </body>
 </html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ article.title }}</title>
-</head>
-<body>
-    <h1>{{ article.title }}</h1>
-    <p>{{ article.content }}</p>
-    <hr>
-    <h2>Bình luận</h2>
-    <ul>
-        {% for comment in comments %}
-            <li>
-                <strong>{{ comment.author }}:</strong>
-                {{ comment.content }} <small>({{ comment.created_at }})</small>
-            </li>
-        {% empty %}
-            <li>Chưa có bình luận nào.</li>
-        {% endfor %}
-    </ul>
-    <hr>
-    {% if user.is_authenticated %}
-        <h3>Thêm bình luận</h3>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Gửi</button>
-        </form>
-    {% else %}
-        <p><a href="{% url 'login' %}">Đăng nhập</a> để bình luận.</p>
-    {% endif %}
-</body>
-</html>
+
+<h1>{{ article.title }}</h1>
+<p>{{ article.content }}</p>
+<hr>
+<h2>Bình luận</h2>
+<ul>
+    {% for comment in comments %}
+        <li>
+            <strong>{{ comment.author }}:</strong> {{ comment.content }} <small>({{ comment.created_at }})</small>
+        </li>
+    {% empty %}
+        <li>Chưa có bình luận nào.</li>
+    {% endfor %}
+</ul>
+<hr>
+{% if user.is_authenticated %}
+    <h3>Thêm bình luận</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Gửi</button>
+    </form>
+{% else %}
+    <p><a href="{% url 'login' %}">Đăng nhập</a> để bình luận.</p>
+{% endif %}

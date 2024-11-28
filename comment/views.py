@@ -20,5 +20,10 @@ def article_detail(request, pk):
             return redirect('login')  # Chuyển hướng đến trang đăng nhập nếu người dùng chưa đăng nhập
     else:
         form = CommentForm()
+    return render(request, 'article_detail.html', {
+        'article': article,
+        'comments': comments,
+        'form': form,
+    })
 
-    return render(request, 'article_detail.html', {'article': article, 'comments': comments, 'form': form})
+    
