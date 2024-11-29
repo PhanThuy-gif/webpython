@@ -1,0 +1,14 @@
+{% extends "templates/article_html" %}
+
+{% block title %}Comment{% endblock %}  
+
+{% block content %}
+{% for post in Posts %}
+    <h4>{{post.date|date:"d-m-Y"}}<a href="/comment/{{post.id}}">{{post.title}}</a></h4> <!-- Cập nhật đường dẫn -->
+    <img src="{{post.image.url}}" width="500px" height="300px" />
+{% endfor %}
+<br/>
+{% if page_obj.has_next %}
+    <a href="{{request.path}}?page={{page_obj.next_page_number}}">Tiếp theo</a>
+{% endif %}
+{% endblock %}
