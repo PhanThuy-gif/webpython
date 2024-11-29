@@ -9,7 +9,9 @@ class CommentForm(forms.ModelForm):
         comment = super().save(commit=False)
         comment.author = self.author
         comment.post = self.post
-        comment.save()
+        if commit:
+            comment.save()
+        return comment
     class Meta:
         model = Comment
         fields = ["body"]

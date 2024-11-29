@@ -183,7 +183,34 @@
             <p>{{ paragraph }}</p>
         {% endfor %} <!-- Hiển thị văn bản bài báo -->
     </div>
+    <div class="comments-section mt-5">
+        <h3>Bình luận</h3>
+        {% for comment in article.comments.all %}
+            <div class="comment">
+                <p><strong>{{ comment.author.username }}</strong> ({{ comment.date|date:"d-m-Y" }}):</p>
+                <p>{{ comment.body }}</p>
+            </div>
+        {% empty %}
+            <p>Chưa có bình luận nào.</p>
+        {% endfor %}
+    </div>
 
+    <!-- Form bình luận (nếu người dùng đã đăng nhập) -->
+    {% if user.is_authenticated %}
+        <div class="comment-form mt-4">
+            <h4>Thêm bình luận:</h4>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <textarea name="body" class="form-control" rows="4" placeholder="Viết bình luận của bạn..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Gửi bình luận</button>
+            </form>
+        </div>
+    {% else %}
+        <p>Để bình luận, bạn cần <a href="{% url 'login' %}">đăng nhập</a>.</p>
+    {% endif %}
+</div>
     <!-- Footer -->
     <footer class="footer mt-5 text-center text-muted">
         <p>&copy; Bao News. All rights reserved.</p>
@@ -191,28 +218,3 @@
 
 </body>
 </html>
-
-<h1>{{ article.title }}</h1>
-<p>{{ article.content }}</p>
-<hr>
-<h2>Bình luận</h2>
-<ul>
-    {% for comment in comments %}
-        <li>
-            <strong>{{ comment.author }}:</strong> {{ comment.content }} <small>({{ comment.created_at }})</small>
-        </li>
-    {% empty %}
-        <li>Chưa có bình luận nào.</li>
-    {% endfor %}
-</ul>
-<hr>
-{% if user.is_authenticated %}
-    <h3>Thêm bình luận</h3>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Gửi</button>
-    </form>
-{% else %}
-    <p><a href="{% url 'login' %}">Đăng nhập</a> để bình luận.</p>
-{% endif %}
