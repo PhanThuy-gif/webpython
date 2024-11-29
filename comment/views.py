@@ -11,7 +11,6 @@ def post(request,pk):
         if not request.user.is_authenticated:
             return HttpResponseRedirect(reverse('login'))
         form = CommentForm(request.POST,author=request.user,post=post)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(request.path)
+        form.save()
+        return HttpResponseRedirect(request.path)
     return render(request, "comment/post.html", {"post":post, "form":form})
