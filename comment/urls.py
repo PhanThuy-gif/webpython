@@ -5,8 +5,7 @@ from comment.models import Post
 from django.contrib.auth import views as auth_views
 from django.urls import re_path
 
-urlpatterns = [
-    re_path(r'^article-detail/(?P<article_id>\d+)/$', views.article_detail, name='article_detail')
 
-    
+urlpatterns = [
+    re_path(r'^article-detail/(?P<post_url>\d+)/$', views.article_detail, name='article_detail'),
 ]

@@ -1,10 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.timezone import now
 
-class Post(models.Model):  # Đây là model bài viết cơ bản
-    title = models.CharField(max_length=200)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+class Post(models.Model):
+    title = models.CharField(max_length=255)
+    link = models.URLField(max_length=1000,default="")
+    published = models.DateTimeField(null=True, blank=True)
+    summary = models.TextField(max_length=255,default="")
+    content = models.TextField(null=True, blank=True)
+    image_url = models.URLField(blank=True, null=True)
+    category = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.title
