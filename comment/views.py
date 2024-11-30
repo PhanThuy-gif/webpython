@@ -2,7 +2,12 @@ from django.shortcuts import render,get_object_or_404, redirect
 from comment.models import Comment,Post
 from comment.forms import CommentForm
 from django.contrib.auth.decorators import login_required
-from urllib.parse import unquote
+from django.http import JsonResponse
+
+
+def article_content(request, post_url):
+    post = get_object_or_404(Post, link=post_url)
+    return JsonResponse({'content': post.content})
 
 def article_detail(request, post_url):
     post = get_object_or_404(Post, id=post_url)  # Lấy bài viết theo ID
