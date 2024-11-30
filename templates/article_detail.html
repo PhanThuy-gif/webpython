@@ -19,12 +19,10 @@
         }
 
         .navbar {
-            position: sticky; /* Hoặc position: fixed nếu muốn navbar cố định */
+            position: sticky;
             top: 0;
             z-index: 1000;
-            margin-top: 0px; /* Loại bỏ margin-top */
-            padding-top: 0px; /* Loại bỏ padding-top */
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Thêm hiệu ứng bóng nhẹ */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         h1 {
@@ -35,11 +33,13 @@
         }
 
         .article-title {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: bold;
             color: #000000;
+            text-align: center;
             text-decoration: none;
             transition: color 0.3s ease;
+            text-align: left;
         }
 
         .article-title:hover {
@@ -103,15 +103,17 @@
             padding: 25px;
             border-radius: 10px;
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 40px;
+            margin: 40px auto;
+            max-width: 1000px;
+            width: 100%;
         }
 
         .image-container {
-            max-width: 80%;
+            max-width: 800px;
+            margin: 0 auto;
             overflow: hidden;
             border-radius: 10px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            margin: 0 auto;
         }
 
         .img-news-fluid {
@@ -151,6 +153,33 @@
             color: #0056b3;
             transform: translateY(-2px);
         }
+
+
+
+        .latest-articles {
+            max-width: 1025px;
+            margin: 0 auto;
+        }
+        
+        .latest-articles .row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+        
+        .latest-articles .col-md-4, .latest-articles .col-md-8 {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        .latest-articles .article {
+            margin-bottom: 0; /* Loại bỏ khoảng cách dưới các bài báo */
+        }
+
+        .latest-articles .article img {
+            margin-bottom: 0; /* Loại bỏ khoảng cách dưới ảnh bài báo */
+        }
+        
+        
     </style>
 </head>
 <body>
@@ -168,7 +197,6 @@
             <p class="publish-date">{{ article.publish_date|date:"D, d M Y H:i:s" }}</p>
         </div>
 
-
         <!-- Hiển thị ảnh bài báo -->
         {% if image_url %}
             <div class="image-container mb-4">
@@ -177,13 +205,39 @@
         {% else %}
             <p class="text-center text-warning">No image available</p>
         {% endif %}
-       
-    <!-- Phần nội dung bài báo -->
-    <div class="article-text">
-        {% for paragraph in paragraphs %}
-            <p>{{ paragraph }}</p>
-        {% endfor %} <!-- Hiển thị văn bản bài báo -->
-    </div>
+
+        <!-- Phần nội dung bài báo -->
+        <div class="article-text">
+            {% for paragraph in paragraphs %}
+                <p>{{ paragraph }}</p>
+            {% endfor %}
+        </div>
+
+        <!-- Hiển thị 10 bài báo mới nhất -->
+        <div class="latest-articles">
+            <div class="row">
+                {% for latest in latest_articles %}
+                <div class="col-12 mb-4">
+                    <div class="row article align-items-center">
+                        <!-- Cột ảnh -->
+                        <div class="col-md-4">
+                            <a href="{% url 'article_detail' article_url=latest.link %}">
+                                <img src="{{ latest.image_url }}" alt="{{ latest.title }}" class="img-fluid rounded shadow-sm">
+                            </a>
+                        </div>
+                        <!-- Cột nội dung -->
+                        <div class="col-md-8">
+                            <a href="{% url 'article_detail' article_url=latest.link %}">
+                                <h3 class="article-title">{{ latest.title }}</h3>
+                            </a>
+                            <p class="article-summary">{{ latest.summary }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
 
     <!-- Footer -->
     <footer class="footer mt-5 text-center text-muted">
