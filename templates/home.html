@@ -142,7 +142,7 @@
                 var encodedArticleLink = encodeURIComponent(articleLink);
         
                 $.ajax({
-                    url: "/article-content/",  
+                    url: "{% url 'article_content' %}",  
                     method: "GET",  
                     data: { 'article_url': encodedArticleLink },  
                     success: function(response) {
