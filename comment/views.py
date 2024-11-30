@@ -1,31 +1,20 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render,get_object_or_404, redirect
 from comment.models import Post
 from comment.models import Comment
 from comment.forms import CommentForm
 from django.contrib.auth.decorators import login_required
 from urllib.parse import unquote
 
-def article_detail(request, article_url):
-    decoded_url = unquote(article_url)  # Giải mã URL
-    post = get_object_or_404(Post, url=decoded_url)  # Điều chỉnh logic nếu cần
-    comments = post.comments.all()  # Lấy danh sách bình luận của bài viết
-    form = CommentForm()
-
-    # Xử lý khi người dùng gửi bình luận
-    if request.method == 'POST':
+def article_detail(request, post_id):
+    post = get_object_or_404(Post, id=post_id)  # Lấy bài viết theo ID
+    if request.method == "POST":
         form = CommentForm(request.POST)
-        try:
-          if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = post
-            comment.user = request.user  # Thêm người dùng hiện tại vào bình luận
-            comment.save()
-        except Exception as e:
-    # Ghi lỗi vào log hoặc hiển thị thông báo lỗi cho người dùng
-                print(f"Error saving comment: {str(e)}")
+        if form.is_valid():
+            comment = form.save(commit=False)  # Tạo comment nhưng chưa lưu vào DB
+            comment.post = post  # Gán bài viết
+            comment.user = request.user  # Gán người dùng
+            comment.save()  # Lưu vào DB
+            return redirect('article_detail', post_id=post.id)  # Redirect đến trang chi tiết bài viết
     else:
-        form=CommentForm()
-    comments=post.comments.all()
-
-    return render(request, 'article_detail.html',{'post': post,'form': form, 'comments': comments})
-
+        form = CommentForm()  # Hiển thị form trống nếu không phải POST
+    return render(request, 'article_detail.html', {'form': form, 'post': post})

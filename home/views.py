@@ -1,53 +1,72 @@
-from django.shortcuts import render ,HttpResponse
+from django.shortcuts import render 
 from django.contrib.auth.models import User
 from account.models import Profile
-import urllib
-from urllib.parse import unquote
-from urllib.parse import urljoin
 import feedparser
 from newspaper import Article
-from django.http import JsonResponse
-from urllib.parse import quote, urljoin
 import re
 from bs4 import BeautifulSoup
-    
-def article_detail(request, article_url):
-    if request.user.is_authenticated:
-        user_object = User.objects.get(username=request.user)
-        user_profile = Profile.objects.get(user=user_object)
-        context = {"user_profile": user_profile}
-    else:
-        context = {}
-    
-    try:
-        # Giải mã URL
-        decoded_url = unquote(article_url)
-        
-        # Tạo đối tượng Article với URL đã giải mã
-        article = Article(decoded_url)
-        article.download()
-        article.parse()
-        
-        paragraphs = article.text.split('\n')
-
-        # Kiểm tra nếu ảnh có trong bài báo
-        image_url = article.top_image if article.top_image else None
-
-        # Thêm dữ liệu vào context
-        context.update({
-            'article': article,
-            'image_url': image_url,
-            'paragraphs': paragraphs
-        })
-
-        # Trả về nội dung bài báo cho template
-        return render(request, 'article_detail.html', context)
-    except Exception as e:
-        return JsonResponse({'error': f'Lỗi: {str(e)}'})
+from django.utils.dateparse import parse_datetime
+from .models import Article
+from newspaper import Article as NewspaperArticle
+from article.views import article_detail
 
 
+def fetch_and_save_new_articles():
+    """
+    Lấy bài báo mới từ RSS feed và lưu vào cơ sở dữ liệu nếu chưa tồn tại.
+    """
+    rss_url = "https://vnexpress.net/rss/tin-moi-nhat.rss"
+    feed = feedparser.parse(rss_url)
+
+    for entry in feed.entries[:50]:  # Lấy tối đa 50 bài báo
+        # Kiểm tra bài báo đã tồn tại hay chưa
+        if not Article.objects.filter(link=entry.link).exists():
+            # Lấy URL ảnh
+            image_url = entry.enclosures[0].href if 'enclosures' in entry and entry.enclosures else None
+
+            # Nếu không có enclosure, tìm ảnh trong phần description
+            if not image_url and 'description' in entry:
+                img_match = re.search(r'<img src="([^"]+)"', entry.description)
+                if img_match:
+                    image_url = img_match.group(1)
+
+            # Nếu không tìm thấy ảnh, dùng ảnh mặc định
+            if not image_url:
+                image_url = "/static/images/news.webp"
+
+            # Xử lý phần tóm tắt
+            summary_text = ""
+            if 'description' in entry:
+                soup = BeautifulSoup(entry.description, 'html.parser')
+                for tag in soup.find_all(['a', 'img']):  # Loại bỏ thẻ <a> và <img>
+                    tag.decompose()
+                summary_text = soup.get_text()
+
+            # Lấy nội dung đầy đủ của bài báo từ liên kết
+            try:
+                full_article = NewspaperArticle(entry.link)  # Tạo đối tượng Article từ URL
+                full_article.download()  # Tải bài báo
+                full_article.parse()  # Phân tích bài báo
+                full_content = full_article.text  # Lấy nội dung đầy đủ
+            except Exception:
+                full_content = ""  # Nếu không thể tải nội dung bài báo, để trống
+
+            # Lưu bài báo vào cơ sở dữ liệu
+            Article.objects.create(
+                title=entry.title,
+                link=entry.link,
+                published=parse_datetime(entry.published),
+                summary=summary_text,
+                content=full_content,  # Lưu nội dung đầy đủ
+                image_url=image_url,
+            )
+def get_articles_from_database(limit=51):
+    return Article.objects.all().order_by('-id')[:limit]
 
 def index(request):
+    """
+    Hàm xử lý request của trang chủ.
+    """
     # Kiểm tra nếu người dùng đã đăng nhập
     if request.user.is_authenticated:
         user_object = User.objects.get(username=request.user)
@@ -56,61 +75,19 @@ def index(request):
     else:
         context = {}
 
-    # URL của RSS Feed từ VnExpress
-    rss_url = "https://vnexpress.net/rss/tin-moi-nhat.rss"
-    feed = feedparser.parse(rss_url)
+    # Lấy và lưu các bài báo mới
+    fetch_and_save_new_articles()
 
-    articles = []
-    for entry in feed.entries[:51]:  # Lấy 51 bài báo mới nhất
-        # Mã hóa URL của bài báo
-        encoded_url = quote(entry.link)
-
-        image_url = entry.enclosures[0].href if 'enclosures' in entry and entry.enclosures else None
-    
-    # Nếu không có enclosure, tìm ảnh trong phần description
-        if not image_url and 'description' in entry:
-            img_match = re.search(r'<img src="([^"]+)"', entry.description)
-            if img_match:
-                image_url = img_match.group(1)
-                
-        if not image_url:
-            image_url = "/static/images/news.webp" 
-            
-        
-        if 'description' in entry:
-            soup = BeautifulSoup(entry.description, 'html.parser')
-            # Xóa các thẻ <a> và <img>
-            for tag in soup.find_all(['a', 'img']):
-                tag.decompose()  # Xóa thẻ khỏi DOM
-
-            # Lấy lại tóm tắt đã xử lý
-            summary_text = soup.get_text()
-
-
-        # Thêm bài báo vào danh sách articles
-        articles.append({
-            'title': entry.title,
-            'link': encoded_url,  # Sử dụng URL đã mã hóa
-            'published': entry.published,
-            'summary': summary_text,
-            'image_url': image_url  # Truyền URL ảnh vào template
-        })
-
-    # Cập nhật context để chứa cả thông tin người dùng và bài báo
+    # Lấy danh sách bài báo từ cơ sở dữ liệu
+    articles = get_articles_from_database()
     context['articles'] = articles
 
-    # Trả về template với dữ liệu người dùng và bài báo
+    # Trả về template với dữ liệu bài báo
     return render(request, 'home.html', context)
 
-def category_view(request, category):
-    
-    if request.user.is_authenticated:
-        user_object = User.objects.get(username=request.user)
-        user_profile = Profile.objects.get(user=user_object)
-        context = {"user_profile": user_profile}
-    else:
-        context = {}
-    
+
+
+def fetch_new_articles(category):
     # Định nghĩa các RSS feed cho từng hạng mục
     rss_urls = {
         "Thời Sự": "https://vnexpress.net/rss/thoi-su.rss",
@@ -133,16 +110,15 @@ def category_view(request, category):
     # Lấy URL của category từ danh sách RSS
     rss_url = rss_urls.get(category)
     if not rss_url:
-        # Trả về trang 404 nếu không tìm thấy chuyên mục
-        return render(request, '404.html', status=404)
+        return None  # Trả về None nếu không tìm thấy chuyên mục
 
     # Tải và phân tích RSS feed
     feed = feedparser.parse(rss_url)
 
-    articles = []
-    for entry in feed.entries[:51]:  # Lấy 51 bài báo mới nhất
-        # Mã hóa URL của bài báo
-        encoded_url = quote(entry.link)
+    for entry in feed.entries[:50]:  # Lấy 50 bài báo mới nhất
+        # Kiểm tra xem bài báo đã tồn tại trong cơ sở dữ liệu chưa
+        if Article.objects.filter(link=entry.link).exists():
+            continue  # Nếu bài báo đã tồn tại thì bỏ qua
 
         # Kiểm tra và lấy ảnh từ enclosure (nếu có)
         image_url = None
@@ -163,24 +139,55 @@ def category_view(request, category):
         summary_text = ''
         if 'description' in entry:
             soup = BeautifulSoup(entry.description, 'html.parser')
-            # Xóa các thẻ <a> và <img>
-            for tag in soup.find_all(['a', 'img']):
-                tag.decompose()  # Xóa thẻ khỏi DOM
-
-            # Lấy lại tóm tắt đã xử lý
+            for tag in soup.find_all(['a', 'img']):  # Loại bỏ thẻ <a> và <img>
+                tag.decompose()
             summary_text = soup.get_text()
 
-        # Thêm bài báo vào danh sách articles
-        articles.append({
-            'title': entry.title,
-            'link': encoded_url,  # Sử dụng URL đã mã hóa
-            'published': entry.published,
-            'summary': summary_text,
-            'image_url': image_url  # Truyền URL ảnh vào template
-        })
+        # Lấy nội dung đầy đủ của bài báo
+        try:
+            full_article = NewspaperArticle(entry.link)  # Tạo đối tượng Article từ URL
+            full_article.download()  # Tải bài báo
+            full_article.parse()  # Phân tích bài báo
+            full_content = full_article.text  # Lấy nội dung đầy đủ
+        except Exception as e:
+            full_content = ""  # Nếu có lỗi, không có nội dung đầy đủ
 
-    # Cập nhật context để chứa cả thông tin người dùng và bài báo
-    context.update({'articles': articles, 'category': category})
+        # Lưu bài báo vào cơ sở dữ liệu
+        Article.objects.create(
+            title=entry.title,
+            link=entry.link,
+            published=parse_datetime(entry.published),
+            summary=summary_text,
+            content=full_content,  # Lưu nội dung đầy đủ
+            image_url=image_url,
+            category=category
+        )
+
+def get_articles_from_db(category):
+    # Lấy các bài báo từ cơ sở dữ liệu và sắp xếp theo thời gian
+    return Article.objects.filter(category=category).order_by('-id')[:51]
+
+def category_view(request, category):
+    if request.user.is_authenticated:
+        user_object = User.objects.get(username=request.user)
+        user_profile = Profile.objects.get(user=user_object)
+        context = {"user_profile": user_profile}
+    else:
+        context = {}
+
+    # Lấy bài báo mới từ RSS feed và cập nhật database
+    fetch_new_articles(category)
+
+    # Lấy các bài báo từ cơ sở dữ liệu
+    articles = get_articles_from_db(category)
+
+    # Nếu không tìm thấy bài báo nào, trả về trang 404
+    if not articles:
+        return render(request, '404.html', status=404)
+
+    context['articles'] = articles
 
     # Trả về template với dữ liệu người dùng và bài báo
     return render(request, 'home.html', context)
+
+
