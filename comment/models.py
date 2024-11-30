@@ -10,7 +10,7 @@ class Post(models.Model):  # Đây là model bài viết cơ bản
         return self.title
 
 class Comment(models.Model):  # Model bình luận
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments',null=True, blank=True)  # Liên kết với Post
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments',default=1)  # Liên kết với Post
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Ai là người bình luận
     content = models.TextField()  # Nội dung bình luận
     created_at = models.DateTimeField(auto_now_add=True)  # Ngày giờ bình luận

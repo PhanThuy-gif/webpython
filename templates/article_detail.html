@@ -206,7 +206,7 @@
         {% csrf_token %}
         <div class="form-group">
             <label for="id_content">Nội dung:</label> <!-- Thêm nhãn cho trường -->
-            <textarea id="id_content" name="content" class="form-control" rows="4" required></textarea> <!-- Thay thế crispy field bằng HTML -->
+            <input id="id_content" name="content" class="form-control" rows="4" required> <!-- Thay thế crispy field bằng HTML -->
         </div>
         <button type="submit" class="btn btn-primary mt-2">Gửi bình luận</button>
     </form>
