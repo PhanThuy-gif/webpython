@@ -183,34 +183,33 @@
             <p>{{ paragraph }}</p>
         {% endfor %} <!-- Hiển thị văn bản bài báo -->
     </div>
-    <div class="comments-section mt-5">
-        <h3>Bình luận</h3>
-        {% for comment in article.comments.all %}
-            <div class="comment">
-                <p><strong>{{ comment.author.username }}</strong> ({{ comment.date|date:"d-m-Y" }}):</p>
-                <p>{{ comment.body }}</p>
-            </div>
-        {% empty %}
-            <p>Chưa có bình luận nào.</p>
-        {% endfor %}
-    </div>
-
-    <!-- Form bình luận (nếu người dùng đã đăng nhập) -->
-    {% if user.is_authenticated %}
-        <div class="comment-form mt-4">
-            <h4>Thêm bình luận:</h4>
-            <form method="POST">
-                {% csrf_token %}
-                <div class="form-group">
-                    <textarea name="body" class="form-control" rows="4" placeholder="Viết bình luận của bạn..."></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary mt-2">Gửi bình luận</button>
-            </form>
+        <!-- Danh sách bình luận -->
+        <div class="comments-section">
+             <h2 class="mt-5">Bình luận</h2>
+             {% for comment in comments %}
+                <div class="comment mb-3 p-3 bg-light rounded">
+                    <strong>{{ comment.user.username }}</strong> - 
+                    <small class="text-muted">{{ comment.created_at|date:"d M Y, H:i" }}</small>
+                    <p class="mt-2">{{ comment.content }}</p>
+              </div>
+             {% empty %}
+                     <p class="text-muted">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</p>
+             {% endfor %}
         </div>
-    {% else %}
-        <p>Để bình luận, bạn cần <a href="{% url 'login' %}">đăng nhập</a>.</p>
-    {% endif %}
-</div>
+        <!-- Form bình luận -->
+             {% if user.is_authenticated %}
+                     <h4 class="mt-4">Viết bình luận</h4>
+                     <form method="post">
+                         {% csrf_token %}
+                         <div class="form-group">
+                               {{ form.content|as_crispy_field }}
+                         </div>
+                         <button type="submit" class="btn btn-primary mt-2">Gửi bình luận</button>
+                     </form>
+             {% else %}
+                     <p class="mt-4 text-danger">Bạn cần <a href="{% url 'login' %}">đăng nhập</a> để viết bình luận.</p>
+             {% endif %}
+
     <!-- Footer -->
     <footer class="footer mt-5 text-center text-muted">
         <p>&copy; Bao News. All rights reserved.</p>

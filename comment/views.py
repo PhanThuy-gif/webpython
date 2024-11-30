@@ -1,16 +1,25 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Post, Comment
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Post, Comment  # Đảm bảo bạn có import các model
 from .forms import CommentForm
-from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
-def post(request,pk):
-    post = get_object_or_404(Post, pk=pk)
+def article_detail(request, article_id):
+    article = get_object_or_404(Post, id=article_id)  # Lấy bài viết theo ID
+    comments = article.comments.all()  # Lấy danh sách bình luận của bài viết
     form = CommentForm()
+
+    # Xử lý khi người dùng gửi bình luận
     if request.method == 'POST':
-        if not request.user.is_authenticated:
-            return HttpResponseRedirect(reverse('login'))
-        form = CommentForm(request.POST,author=request.user,post=post)
-        form.save()
-        return HttpResponseRedirect(request.path)
-    return render(request, "comment/post.html", {"post":post, "form":form})
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = article
+            comment.user = request.user  # Gán người dùng hiện tại
+            comment.save()
+            return redirect('article_detail', article_id=article.id)
+
+    return render(request, 'article_detail.html', {
+        'article': article,
+        'comments': comments,
+        'form': form,
+    })
