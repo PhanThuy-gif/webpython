@@ -1,0 +1,70 @@
+body {
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    margin-top: 25px;
+}
+
+.article-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.article-card img {
+    width: 200px;
+    height: auto;
+    object-fit: cover;
+}
+
+.article-content {
+    padding: 15px;
+    flex: 1;
+}
+
+.article-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #000;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.article-title:hover {
+    color: #007bff;
+}
+
+.article-summary {
+    font-size: 1rem;
+    color: #555;
+    margin-top: 10px;
+}
+
+.btn-remove {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-remove:hover {
+    background-color: #b02a37;
+}

@@ -9,6 +9,7 @@ from django.utils.dateparse import parse_datetime
 from .models import Article
 from newspaper import Article as NewspaperArticle
 from article.views import article_detail
+from django.db.models import Q
 
 
 def fetch_and_save_new_articles():
@@ -18,7 +19,7 @@ def fetch_and_save_new_articles():
     rss_url = "https://vnexpress.net/rss/tin-moi-nhat.rss"
     feed = feedparser.parse(rss_url)
 
-    for entry in feed.entries[:50]:  # Lấy tối đa 50 bài báo
+    for entry in feed.entries[:5]:  # Lấy tối đa 50 bài báo
         # Kiểm tra bài báo đã tồn tại hay chưa
         if not Article.objects.filter(link=entry.link).exists():
             # Lấy URL ảnh
@@ -115,7 +116,7 @@ def fetch_new_articles(category):
     # Tải và phân tích RSS feed
     feed = feedparser.parse(rss_url)
 
-    for entry in feed.entries[:50]:  # Lấy 50 bài báo mới nhất
+    for entry in feed.entries[:5]:  # Lấy 50 bài báo mới nhất
         # Kiểm tra xem bài báo đã tồn tại trong cơ sở dữ liệu chưa
         if Article.objects.filter(link=entry.link).exists():
             continue  # Nếu bài báo đã tồn tại thì bỏ qua
@@ -190,4 +191,39 @@ def category_view(request, category):
     # Trả về template với dữ liệu người dùng và bài báo
     return render(request, 'home.html', context)
 
+
+
+def search(request):
+    # Kiểm tra nếu người dùng đã đăng nhập
+    if request.user.is_authenticated:
+        user_object = User.objects.get(username=request.user)
+        user_profile = Profile.objects.get(user=user_object)
+        context = {"user_profile": user_profile}
+    else:
+        context = {}
+
+    # Xử lý tìm kiếm
+    if request.method == "POST":
+        searched = request.POST.get("searched", "").strip()
+        
+        if searched:
+            # Sử dụng Django ORM để tìm kiếm trong cơ sở dữ liệu
+            filtered_articles = Article.objects.filter(
+                Q(title__icontains=searched) |  # Tìm trong tiêu đề
+                Q(summary__icontains=searched) |  # Tìm trong tóm tắt
+                Q(content__icontains=searched)  # Tìm trong nội dung bài viết
+            ).order_by('-published')  # Sắp xếp theo ngày xuất bản mới nhất
+            
+            context.update({
+                'searched': searched,
+                'articles': filtered_articles,
+            })
+        else:
+            # Trường hợp không nhập từ khóa
+            context['searched'] = searched
+            context['articles'] = []
+    else:
+        context['articles'] = []
+
+    return render(request, 'home.html', context)
 

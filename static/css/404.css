@@ -1,0 +1,26 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.error-message {
+    font-size: 2rem;
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.error-description {
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+.btn-home {
+    margin-top: 20px;
+}
