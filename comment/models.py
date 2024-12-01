@@ -1,12 +1,12 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils.timezone import now
 from home.models import Article
+from django.conf import settings
 
 
 class Comment(models.Model):  # Model bình luận
-    post = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')  
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Ai là người bình luận
+    post = models.ForeignKey(Article, related_name='comments', on_delete=models.CASCADE)  
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Ai là người bình luận
     content = models.TextField()  # Nội dung bình luận
     created_at = models.DateTimeField(auto_now_add=True)  # Ngày giờ bình luận
 
