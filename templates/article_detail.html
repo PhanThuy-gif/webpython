@@ -236,6 +236,37 @@
                 {% endfor %}
             </div>
         </div>
+        <!-- Phần hiển thị bình luận -->
+<div class="container">
+    <h2 class="mt-5">Bình luận</h2>
+    <div class="comments-section">
+        {% for comment in comments %}
+            <div class="comment mb-3 p-3 bg-light rounded">
+                <strong>{{ comment.user.username }}</strong> - 
+                <small class="text-muted">{{ comment.created_at|date:"d M Y, H:i" }}</small>
+                <p class="mt-2">{{ comment.content }}</p>
+            </div>
+        {% empty %}
+            <p class="text-muted">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</p>
+        {% endfor %}
+    </div>
+
+    <hr>
+
+    <!-- Form thêm bình luận -->
+    {% if user.is_authenticated %}
+        <h4 class="mt-4">Viết bình luận</h4>
+        <form method="article">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.content}} <!-- Hiển thị form (dùng crispy hoặc raw HTML) -->
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Gửi bình luận</button>
+        </form>
+    {% else %}
+        <p class="mt-4 text-danger">Bạn cần <a href="{% url 'login' %}">đăng nhập</a> để viết bình luận.</p>
+    {% endif %}
+</div>
 
     <!-- Footer -->
     <footer class="footer mt-5 text-center text-muted">
