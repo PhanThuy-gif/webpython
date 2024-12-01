@@ -14,7 +14,7 @@ def post_detail(request, post_url):
             comment.post = post
             comment.author = request.user
             comment.save()
-            return redirect('arcicle_detail', post_url=post.id)
+            return redirect('post_detail', post_url=post.url)
     else:
         form = CommentForm()
 
@@ -26,7 +26,7 @@ def post_detail(request, post_url):
 
 def delete_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
-    post_id = comment.post.id
+    post_url = comment.post.url
     comment.delete()
-    return redirect('article_detail', post_id=post_id)
+    return redirect('post_detail', post_url=post_url)
 

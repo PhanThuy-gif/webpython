@@ -259,7 +259,7 @@
         <form method="article">
             {% csrf_token %}
             <div class="form-group">
-                {{ form.content}} <!-- Hiển thị form (dùng crispy hoặc raw HTML) -->
+                <id="{{ form.content.id_for_label }}" name="{{ form.content.name }}" class="form-control" rows="4">{{ form.content.value }}
             </div>
             <button type="submit" class="btn btn-primary mt-2">Gửi bình luận</button>
         </form>
